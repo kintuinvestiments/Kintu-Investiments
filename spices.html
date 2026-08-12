@@ -267,6 +267,44 @@
 .page-hero h1{font-size:clamp(2rem,4vw,3rem);line-height:1.08;}
 .page-hero p{max-width:62ch;color:var(--ink-soft);margin:14px 0 0;font-size:1rem;}
 .page-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px;}
+
+/* Spice product images */
+.spice-tab{
+  position:relative;
+  overflow:hidden;
+}
+.spice-tab .spice-thumb{
+  width:58px;
+  height:38px;
+  object-fit:cover;
+  border-radius:8px;
+  margin-right:8px;
+  vertical-align:middle;
+  border:1px solid rgba(44,107,59,.25);
+}
+.spice-tab.image-tab{
+  min-width:190px;
+  text-align:left;
+  padding:8px 12px;
+}
+.spice-product-image{
+  width:100%;
+  max-width:650px;
+  aspect-ratio:16/9;
+  object-fit:cover;
+  border-radius:18px;
+  display:block;
+  box-shadow:0 10px 30px rgba(47,31,18,.14);
+  border:1px solid rgba(44,107,59,.16);
+}
+.spice-image-wrap{
+  margin-bottom:18px;
+}
+@media(max-width:700px){
+  .spice-tab.image-tab{min-width:150px;}
+  .spice-tab .spice-thumb{width:48px;height:32px;}
+}
+
 </style>
 </head>
 <body data-page="spices">
@@ -354,6 +392,9 @@ document.querySelectorAll('nav.primary a[data-page]').forEach(link => {
 
 // Spice data — 9 spices, each with 3 uses
 const spices = [
+  { name:'Mixed Spices Powder', tagline:'100% natural & pure', image:'images/mixed-spices-powder.png', desc:'A ready mixed spice blend for adding rich, aromatic flavour to everyday dishes.', uses:['Enhances flavour in a variety of dishes','Saves time with a ready spice blend','Makes everyday meals more aromatic and special'] },
+  { name:'Rosemary Powder', tagline:'100% natural & pure', image:'images/rosemary-powder.png', desc:'Finely ground rosemary powder with a distinctive herbal aroma for cooking and seasoning.', uses:['Adds a fragrant herbal flavour to dishes','Convenient for seasoning and cooking','Pairs well with meats, vegetables and sauces'] },
+  { name:'Garlic Powder', tagline:'100% natural & pure', image:'images/garlic-powder.png', desc:'Finely ground garlic powder for convenient, even garlic flavour in everyday cooking.', uses:['Seasoning meat, vegetables and sauces','Useful in dry rubs and marinades','Adds a savoury garlic base to soups and dressings'] },
   { name:'Cloves', tagline:'Whole aromatic bud', color:'radial-gradient(circle at 35% 30%,#6B4A2E,#3B2413 70%)', desc:'Dried, unopened flower buds with a warm, sweet-sharp bite — sold whole for slow-cooked dishes and hot drinks.', uses:['Adds depth to pilau, meat stews and rice dishes','Brewed into spiced tea and mulled drinks','Used traditionally to ease toothache and digestion'] },
   { name:'Black Pepper', tagline:'All-purpose heat', color:'radial-gradient(circle at 35% 30%,#3B3025,#17110B 70%)', desc:'The everyday seasoning spice — sharp, peppery heat that builds flavour in almost any savoury dish.', uses:['General seasoning for meat, fish and vegetables','Base for pepper sauces and marinades','Stirred into soups and stews to round out flavour'] },
   { name:'White Pepper', tagline:'Milder, cleaner heat', color:'radial-gradient(circle at 35% 30%,#E9DBB6,#C7AE79 70%)', desc:'Black pepper with the outer husk removed — a gentler, earthier heat that disappears visually into pale dishes.', uses:['Seasoning cream soups and light sauces without dark specks','Common in broths, dressings and marinades','Milder alternative for dishes like mashed potato'] },
@@ -361,8 +402,7 @@ const spices = [
   { name:'Chicken Masala', tagline:'Ready-mixed blend', color:'radial-gradient(circle at 35% 30%,#C24A1E,#7C2A0C 70%)', desc:'A pre-balanced blend built specifically for poultry, taking the guesswork out of seasoning chicken dishes.', uses:['Seasoning chicken stews, curries and soups','Rubbed onto chicken before grilling or roasting','Stirred into sauces for a quick flavour base'] },
   { name:'Moringa', tagline:'Nutrient-dense leaf', color:'radial-gradient(circle at 35% 30%,#7FA858,#4C6E33 70%)', desc:'Dried leaves from the moringa tree, valued for their earthy flavour and place in everyday nutrition.', uses:['Brewed as a herbal tea','Stirred into sauces and leafy greens dishes','Mixed into porridge or smoothies'] },
   { name:'Turmeric Powder', tagline:'Golden ground root', color:'radial-gradient(circle at 35% 30%,#E27A2E,#A8481B 70%)', desc:'Bright gold, earthy and slightly bitter — the colour and backbone of many rice and stew dishes.', uses:['Colours and flavours rice, soups and stews','Foundation ingredient in curry powder blends','Traditionally stirred into warm milk or tea'] },
-  { name:'Curry Powder', tagline:'Blended spice mix', color:'radial-gradient(circle at 35% 30%,#B87A2E,#6F430F 70%)', desc:'A balanced house blend of ground spices for quick, consistent flavour in everyday cooking.', uses:['Seasoning curries, stews and sauces','Flavouring vegetables, beans and lentils','Marinating meat and fish before cooking'] },
-  { name:'Garlic Powder', tagline:'Dried, ground garlic', color:'radial-gradient(circle at 35% 30%,#F1DDA0,#D9B064 70%)', desc:'Concentrated garlic flavour in dry form — convenient for rubs, marinades and dishes needing an even coating.', uses:['Seasoning meat, vegetables and sauces','Key ingredient in dry rubs and marinades','Adds base flavour to soups and dressings'] }
+  { name:'Curry Powder', tagline:'Blended spice mix', color:'radial-gradient(circle at 35% 30%,#B87A2E,#6F430F 70%)', desc:'A balanced house blend of ground spices for quick, consistent flavour in everyday cooking.', uses:['Seasoning curries, stews and sauces','Flavouring vegetables, beans and lentils','Marinating meat and fish before cooking'] }
 ];
 
 const tabsEl = document.getElementById('spiceTabs');
@@ -371,24 +411,35 @@ const panelEl = document.getElementById('spicePanel');
 if (tabsEl && panelEl) {
   function renderPanel(i){
     const s = spices[i];
+    const image = s.image ? `<div class="spice-image-wrap"><img class="spice-product-image" src="${s.image}" alt="${s.name}"></div>` : '';
+    const icon = s.image ? '' : `<div class="big-icon" style="background:${s.color}"></div>`;
     panelEl.innerHTML = `
-      <div class="big-icon" style="background:${s.color}"></div>
-      <div>
-        <div class="tagline">${s.tagline}</div>
-        <h3>${s.name}</h3>
-        <p class="desc">${s.desc}</p>
-        <ul class="uses">
-          ${s.uses.map((u,idx)=>`<li><span class="num">${idx+1}</span><span>${u}</span></li>`).join('')}
-        </ul>
+      ${image}
+      <div class="spice-panel-info">
+        ${icon}
+        <div>
+          <div class="tagline">${s.tagline}</div>
+          <h3>${s.name}</h3>
+          <p class="desc">${s.desc}</p>
+          <ul class="uses">
+            ${s.uses.map((u,idx)=>`<li><span class="num">${idx+1}</span><span>${u}</span></li>`).join('')}
+          </ul>
+        </div>
       </div>`;
   }
 
   spices.forEach((s,i) => {
     const tab = document.createElement('button');
-    tab.className = 'spice-tab';
+    tab.className = 'spice-tab' + (s.image ? ' image-tab' : '');
     tab.setAttribute('role','tab');
     tab.setAttribute('aria-selected', i===0 ? 'true' : 'false');
-    tab.innerHTML = `<span class="dot" style="background:${s.color}"></span>${s.name}`;
+
+    if (s.image) {
+      tab.innerHTML = `<img class="spice-thumb" src="${s.image}" alt="">${s.name}`;
+    } else {
+      tab.innerHTML = `<span class="dot" style="background:${s.color}"></span>${s.name}`;
+    }
+
     tab.addEventListener('click', () => {
       tabsEl.querySelectorAll('.spice-tab').forEach(t => t.setAttribute('aria-selected','false'));
       tab.setAttribute('aria-selected','true');
